@@ -88,32 +88,42 @@
     step();
   }
 
-  var linkHandler = function (ev) {
-    if (!ev.defaultPrevented) {
-      ev.preventDefault();
+  // The following code is in comment for buywith as, 
+  // in buywith, we don't want smoothscroll to update all the anchors.
+  // 2 reasons for that:
+  // 1. we don't need it to work on anchor links. we don't want to change the original behaviour.
+  // 2. In delta (embedded), they have some code in an anchor href - href='#', which actually doesn't need to 
+  //    chnage the url with the anchor. they have preventDefault in their code.
+  //    when they add our bundle, this code is called, before their code is adding preventDefault, and 
+  //    it cause the anchor to be added, so that we jump to a different location.
+  //    happens on delta product page, when changing the additional details data
+  
+//   var linkHandler = function (ev) {
+//     if (!ev.defaultPrevented) {
+//       ev.preventDefault();
 
-      if (location.hash !== this.hash) window.history.pushState(null, null, this.hash)
-      // using the history api to solve issue #1 - back doesn't work
-      // most browser don't update :target when the history api is used:
-      // THIS IS A BUG FROM THE BROWSERS.
-      // change the scrolling duration in this call
-      var node = document.getElementById(this.hash.substring(1))
-      if (!node) return; // Do not scroll to non-existing node
+//       if (location.hash !== this.hash) window.history.pushState(null, null, this.hash)
+//       // using the history api to solve issue #1 - back doesn't work
+//       // most browser don't update :target when the history api is used:
+//       // THIS IS A BUG FROM THE BROWSERS.
+//       // change the scrolling duration in this call
+//       var node = document.getElementById(this.hash.substring(1))
+//       if (!node) return; // Do not scroll to non-existing node
 
-      smoothScroll(node, 500, function (el) {
-        location.replace('#' + el.id)
-        // this will cause the :target to be activated.
-      });
-    }
-  }
+//       smoothScroll(node, 500, function (el) {
+//         location.replace('#' + el.id)
+//         // this will cause the :target to be activated.
+//       });
+//     }
+//   }
 
-  // We look for all the internal links in the documents and attach the smoothscroll function
-  document.addEventListener("DOMContentLoaded", function () {
-    var internal = document.querySelectorAll('a[href^="#"]:not([href="#"])'), a;
-    for (var i = internal.length; a = internal[--i];) {
-      a.addEventListener("click", linkHandler, false);
-    }
-  });
+//   We look for all the internal links in the documents and attach the smoothscroll function  
+//   document.addEventListener("DOMContentLoaded", function () {
+//     var internal = document.querySelectorAll('a[href^="#"]:not([href="#"])'), a;
+//     for (var i = internal.length; a = internal[--i];) {
+//       a.addEventListener("click", linkHandler, false);
+//     }
+//   });
 
   // return smoothscroll API
   return smoothScroll;
